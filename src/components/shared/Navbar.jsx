@@ -28,7 +28,7 @@ const Navbar = () => {
         },
     ]
     return (
-        <div className='bg-neutral-400 '>
+        <div className=' '>
             <div className="navbar container mx-auto">
   <div className="navbar-start">
     <div className="dropdown">
@@ -58,7 +58,7 @@ const Navbar = () => {
       </ul>
     </div>
    <Link href={'/'}>
-   <Image alt="logo" src="/assets/logo.png" height={60} width={65} />
+   <Image alt="logo" src="/assets/logo.png" height={70} width={75} />
 
    </Link>
   </div>
