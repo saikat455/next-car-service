@@ -2,52 +2,53 @@
 import { getServicesDetails } from "@/services/getServices";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 
 const Checkout = ({ params }) => {
-    const {data} = useSession();
-  const [ service, setService ] = useState({});
-  const loadService = async () => {
+  const { data } = useSession();
+  const [service, setService] = useState({});
+
+  const loadService = useCallback(async () => {
     const details = await getServicesDetails(params.id);
     setService(details.service);
-  };
-  const { _id, title, description, img, price, facility } = service || {};
+  }, [params.id]);
 
   const handleBooking = async (event) => {
     event.preventDefault();
-    const newBooking = { 
-        email : data?.user?.email,
-        name : data?.user?.name,
-        address : event.target.address.value,
-        phone : event.target.phone.value,
-        date : event.target.date.value,
-        serviceTitle : title,
-        serviceID : _id,
-        price : price,
-    }
+    const newBooking = {
+      email: data?.user?.email,
+      name: data?.user?.name,
+      address: event.target.address.value,
+      phone: event.target.phone.value,
+      date: event.target.date.value,
+      serviceTitle: service.title,
+      serviceID: service._id,
+      price: service.price,
+    };
 
     const resp = await fetch('https://car-doctor-pro-nine.vercel.app/checkout/api/new-booking', {
-        method: 'POST',
-        body: JSON.stringify(newBooking),
-        headers : {
-            "content-type" : "application/json"
-        }
-    })
-    const response =await resp?.json()
-    toast.success(response?.message)
-    event.target.reset()
-
+      method: 'POST',
+      body: JSON.stringify(newBooking),
+      headers: {
+        "content-type": "application/json"
+      }
+    });
+    const response = await resp?.json();
+    toast.success(response?.message);
+    event.target.reset();
   };
 
   useEffect(() => {
-    loadService()
-  },[params, loadService])
+    loadService();
+  }, [loadService]);
+
+  const { _id, title, description, img, price } = service || {};
 
   return (
     <div className="container mx-auto">
-      <ToastContainer/>
-      <div className="relative  h-72">
+      <ToastContainer />
+      <div className="relative h-72">
         <Image
           className="absolute h-72 w-full left-0 top-0 object-cover"
           src={img}
@@ -69,20 +70,30 @@ const Checkout = ({ params }) => {
               <label className="label">
                 <span className="label-text">Name</span>
               </label>
-              <input defaultValue={data?.user?.name}  type="text" name="name" className="input input-bordered" />
+              <input
+                defaultValue={data?.user?.name}
+                type="text"
+                name="name"
+                className="input input-bordered"
+              />
             </div>
             <div className="form-control">
               <label className="label">
                 <span className="label-text">Date</span>
               </label>
-              <input defaultValue={new Date().getDate()} type="date" name="date" className="input input-bordered" />
+              <input
+                defaultValue={new Date().toISOString().split('T')[0]}
+                type="date"
+                name="date"
+                className="input input-bordered"
+              />
             </div>
             <div className="form-control">
               <label className="label">
                 <span className="label-text">Email</span>
               </label>
               <input
-              defaultValue={data?.user?.email}
+                defaultValue={data?.user?.email}
                 type="text"
                 name="email"
                 placeholder="email"
@@ -94,8 +105,8 @@ const Checkout = ({ params }) => {
                 <span className="label-text">Due amount</span>
               </label>
               <input
-              defaultValue={price}
-              readOnly
+                defaultValue={price}
+                readOnly
                 type="text"
                 name="price"
                 className="input input-bordered"
@@ -106,7 +117,7 @@ const Checkout = ({ params }) => {
                 <span className="label-text">Phone</span>
               </label>
               <input
-              required
+                required
                 type="text"
                 name="phone"
                 placeholder="Your Phone"
