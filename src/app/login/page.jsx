@@ -63,7 +63,7 @@ const Page = () => {
             <h6 className="mb-4">or sign in with</h6>
             <SocialSignin />
             <h6 className="mt-4">
-              Don't have an account?{" "}
+              Not have an account?{" "}
               <Link className="text-primary font-semibold" href={"/signup"}>
                 Sign Up
               </Link>
