@@ -5,8 +5,10 @@ import Link from 'next/link';
 import React from 'react';
 import { CgShoppingCart } from "react-icons/cg";
 import { BsSearch } from "react-icons/bs";
+import { signOut, useSession } from 'next-auth/react';
 
 const Navbar = () => {
+  const session = useSession()
     const navItems = [
         { title: "Home", path: "/" },
         { title: "About", path: "/about" },
@@ -39,7 +41,15 @@ const Navbar = () => {
                     <CgShoppingCart className='text-xl' />
                     <BsSearch className='text-xl' />
                     <a className="btn btn-outline btn-primary px-2 text-base">Appointment</a>
-                    <Link href="/login" className="btn btn-primary px-5 text-white">Login</Link>
+                    { session?.status === 'loading' &&
+            <h6>Loading....</h6>
+            }
+                    { session?.status === 'unauthenticated' &&
+            <Link href="/login" className="btn btn-primary px-8">Login</Link>
+            }
+                    { session?.status === 'authenticated' &&
+            <button className="btn btn-outline btn-ghost px-8" onClick={() => signOut()}>Logout</button>
+            }
                 </div>
             </div>
 

@@ -3,18 +3,26 @@
 import Link from "next/link";
 import React from "react";
 import { BsGithub, BsGoogle } from "react-icons/bs";
+import {signIn} from "next-auth/react";
+import { useRouter } from "next/navigation";
+import SocialSignin from "@/components/shared/SocialSignin";
+
 
 const Page = () => {
+    const router = useRouter()
   const handleLogin = async (event) => {
     event.preventDefault();
-    // const email = event.target.email.value;
-    // const password = event.target.password.value;
-    // const resp = await signIn("credentials", {
-    //   email,
-    //   password,
-    //   redirect: true,
+    const email = event.target.email.value;
+    const password = event.target.password.value;
+    const resp = await signIn("credentials", {
+      email,
+      password,
+      redirect: false
     //   callbackUrl: path ? path : "/",
-    // });
+    });
+    if(resp.status === 200) {
+        router.push('/')
+    }
   };
 
   return (
@@ -47,10 +55,11 @@ const Page = () => {
         </form>
         <div className="text-center mt-6">
           <h6 className="mb-4">or sign in with</h6>
-          <div className="flex items-center justify-center space-x-3">
+          <SocialSignin></SocialSignin>
+          {/* <div className="flex items-center justify-center space-x-3">
             <button className="btn p-5 flex items-center justify-center text-primary text-xl"><BsGithub/></button>
             <button className="btn p-5 flex items-center justify-center text-green-500 text-xl"><BsGoogle/></button>
-          </div>
+          </div> */}
           <h6 className="mt-4">Don't have an account?{" "}
             <Link className="text-primary font-semibold" href={"/signup"}>
               Sign Up
