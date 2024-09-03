@@ -1,20 +1,20 @@
 "use client";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 const Page = ({ params }) => {
   const { data } = useSession();
   const [booking, setBooking] = useState([]);
 
-  const loadBooking = async () => {
+  const loadBooking = useCallback(async () => {
     const bookingDetail = await fetch(
       `https://car-doctor-pro-nine.vercel.app/my-bookings/api/booking/${params.id}`
     );
     const data = await bookingDetail.json();
     setBooking(data.data);
-  };
+  }, [params.id]);
 
   const handleUpdateBooking = async (event) => {
     event.preventDefault();
@@ -33,18 +33,18 @@ const Page = ({ params }) => {
         },
       }
     );
-    if(resp.status === 200) {
-      toast.success("Updated Successfully")
+    if (resp.status === 200) {
+      toast.success("Updated Successfully");
     }
   };
 
   useEffect(() => {
     loadBooking();
-  }, [params]);
+  }, [loadBooking]);
 
   return (
     <div className="container mx-auto">
-      <div className="relative  h-72">
+      <div className="relative h-72">
         <Image
           className="absolute h-72 w-full left-0 top-0 object-cover"
           src={""}

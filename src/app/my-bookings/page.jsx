@@ -2,40 +2,44 @@
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { ToastContainer, toast } from "react-toastify";
 
 const Page = () => {
   const session = useSession();
   const [bookings, setBooking] = useState([]);
-  const loadData = async () => {
-    const resp = await fetch(
-      `https://car-doctor-pro-nine.vercel.app/my-bookings/api/${session?.data?.user?.email}`
-    );
-    const data = await resp.json();
-    setBooking(data?.myBookings);
-  };
+
+  const loadData = useCallback(async () => {
+    if (session?.data?.user?.email) {
+      const resp = await fetch(
+        `https://car-doctor-pro-nine.vercel.app/my-bookings/api/${session?.data?.user?.email}`
+      );
+      const data = await resp.json();
+      setBooking(data?.myBookings);
+    }
+  }, [session?.data?.user?.email]);
 
   const handleDelete = async (id) => {
     const deleted = await fetch(
-      `https://car-doctor-pro-nine.vercel.app/my-bookings/api/booking/${id}`, {
-        method : "DELETE",
+      `https://car-doctor-pro-nine.vercel.app/my-bookings/api/booking/${id}`,
+      {
+        method: "DELETE",
       }
     );
     const resp = await deleted.json();
-    if(resp?.response?.deletedCount >  0) {
-      toast.success(resp?.message)
+    if (resp?.response?.deletedCount > 0) {
+      toast.success(resp?.message);
       loadData();
     }
   };
 
   useEffect(() => {
     loadData();
-  }, [session]);
+  }, [loadData]);
 
   return (
     <div className="container mx-auto">
-      <ToastContainer/>
+      <ToastContainer />
       <div className="relative  h-72">
         <Image
           className="absolute h-72 w-full left-0 top-0 object-cover"
@@ -66,18 +70,20 @@ const Page = () => {
             </thead>
             <tbody>
               {/* row 1 */}
-              {bookings?.map(({ serviceTitle, _id, date, price }) => (
+              {bookings?.map(({ serviceTitle, _id, date, price }, index) => (
                 <tr key={_id}>
-                  <th>1</th>
+                  <th>{index + 1}</th>
                   <td>{serviceTitle}</td>
                   <td>{price}</td>
                   <td>{date}</td>
                   <td>
                     <div className="flex items-center space-x-3">
-                      <Link href={`/my-bookings/update/${_id}`}><button class="btn btn-primary">Edit</button></Link>
+                      <Link href={`/my-bookings/update/${_id}`}>
+                        <button className="btn btn-primary">Edit</button>
+                      </Link>
                       <button
                         onClick={() => handleDelete(_id)}
-                        class="btn btn-error"
+                        className="btn btn-error"
                       >
                         Delete
                       </button>
