@@ -1,5 +1,6 @@
 "use client";
 
+import SocialSignin from "@/components/shared/SocialSignin";
 import Link from "next/link";
 import React from "react";
 import { BsGithub, BsGoogle } from "react-icons/bs";
@@ -57,10 +58,11 @@ const SignUpPage = () => {
           </button>
         </form>
         <div className="text-center mt-4">
-        <div className="flex items-center justify-center space-x-3 mb-4">
+            <SocialSignin></SocialSignin>
+        {/* <div className="flex items-center justify-center space-x-3 mb-4">
             <button className="btn p-5 flex items-center justify-center text-primary text-xl"><BsGithub/></button>
             <button className="btn p-5 flex items-center justify-center text-green-500 text-xl"><BsGoogle/></button>
-          </div>
+          </div> */}
           <h6>
             Have an account?{" "}
             <Link className="text-primary font-semibold" href="/login">

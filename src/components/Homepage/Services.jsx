@@ -1,8 +1,13 @@
 import React from 'react';
 import ServiceCard from '../cards/ServiceCard';
-import { services } from '@/lib/services';
+import { getServices } from '@/services/getServices';
 
-const Services = () => {
+const Services = async () => {
+    const { services } = await getServices();
+  
+    if (services?.length <= 0) {
+      return null;
+    }
     return (
         <div className="text-slate-800 mb-24">
           <div className="text-center container mx-auto">
